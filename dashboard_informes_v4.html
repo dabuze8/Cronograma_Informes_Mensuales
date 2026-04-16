@@ -10,9 +10,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f2;padding:1
 .dash{max-width:1100px;margin:0 auto;}
 .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem;padding-top:0.5rem;}
 .dash-title{font-size:18px;font-weight:600;color:#1a1a18;}
-.period-row{display:flex;align-items:center;gap:8px;}
+.period-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .period-row label{font-size:12px;color:#5f5e5a;}
 .period-row select{font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a18;}
+.sync-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500;margin-left:8px;}
+.sync-ok{background:#EAF3DE;color:#3B6D11;}
+.sync-wait{background:#FAEEDA;color:#633806;}
+.sync-err{background:#FCEBEB;color:#A32D2D;}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
 .kpi{background:#e8e8e4;border-radius:8px;padding:14px 16px;}
 .kpi-label{font-size:11px;color:#5f5e5a;margin-bottom:6px;}
@@ -28,7 +32,7 @@ tbody td{padding:10px 12px;vertical-align:top;}
 .grp-row td{padding:6px 12px;}
 .grp-label{display:flex;align-items:center;gap:8px;}
 .grp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
-.grp-text{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5f5e5a;}
+.grp-text{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 .grp-count{font-size:10px;color:#888;margin-left:auto;}
 .inf-name{font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:2px;}
 .inf-sub{font-size:11px;color:#888;}
@@ -53,29 +57,29 @@ tbody td{padding:10px 12px;vertical-align:top;}
 .btn-finalizar-wrap{display:flex;justify-content:flex-end;margin-bottom:1.5rem;}
 .btn-finalizar{background:#1a1a18;color:#fff;font-size:14px;font-weight:600;padding:10px 28px;border:none;border-radius:8px;cursor:pointer;}
 .btn-finalizar:hover{background:#3a3a38;}
-.btn-finalizar:active{transform:scale(0.98);}
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(245,245,242,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
+.loading-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#1a1a18;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:#5f5e5a;}
 
 @media print {
   @page{size:A4 landscape;margin:15mm 12mm;}
   body{background:#fff !important;padding:0 !important;}
-  .btn-finalizar-wrap{display:none !important;}
+  .btn-finalizar-wrap,.sync-badge,.loading-overlay{display:none !important;}
   .period-row{display:none !important;}
   .date-input,.resp-sel,.st-sel,.obs-input,.btn-x,.btn-add{display:none !important;}
   .print-date,.print-resp,.print-st,.print-obs{display:block !important;}
   .dash{max-width:100% !important;}
-  .panel{border:1px solid #ccc !important;border-radius:0 !important;page-break-inside:avoid;}
-  .kpi-row{margin-bottom:10mm;}
-  .kpi{border:1px solid #ddd !important;}
+  .panel{border:1px solid #ccc !important;border-radius:0 !important;}
+  .kpi{background:#e8e8e4 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   table{font-size:10px !important;}
   thead th{font-size:9px !important;background:#f0f0ec !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .grp-row td{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .cat-pill,.kpi{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .cat-pill{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .st-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .st-badge.emit{background:#EAF3DE;color:#3B6D11;}
   .st-badge.pend{background:#F5F5F0;color:#5F5E5A;}
   .st-badge.venc{background:#FCEBEB;color:#A32D2D;}
-  .kpi{background:#e8e8e4 !important;}
-  .topbar{margin-bottom:8mm;}
   .print-header-period{display:block !important;font-size:12px;color:#5f5e5a;margin-top:2px;}
 }
 .print-date,.print-resp,.print-st,.print-obs,.print-header-period{display:none;}
@@ -89,11 +93,18 @@ tbody td{padding:10px 12px;vertical-align:top;}
 </style>
 </head>
 <body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando datos...</div>
+</div>
+
 <div class="dash">
   <div class="topbar">
-    <div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <span class="dash-title">Cronograma de informes</span>
       <span class="print-header-period" id="printPeriod"></span>
+      <span class="sync-badge sync-wait" id="syncBadge">Conectando...</span>
     </div>
     <div class="period-row">
       <label>Período</label>
@@ -126,7 +137,15 @@ tbody td{padding:10px 12px;vertical-align:top;}
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
+var firebaseConfig = {
+  databaseURL: "https://cronograma-informes-8c976-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
 var RESPS = [
   {sigla:"MC", nombre:"Matia Cardozo"},
   {sigla:"JM", nombre:"Jhonatan Medrano"},
@@ -157,8 +176,8 @@ var CATS = {
   prode:        {label:"PRODE",         color:"#378ADD", pill:"cat-prode",        grp:"Informes PRODE"}
 };
 var GRPS = ["calidad","movimiento","construccion","prode"];
-
 var defResps = ["MC","MC","MC","MC","FP","JM","FP","FP","FP","NA","NA"];
+
 var ST = {};
 for (var i = 0; i < INFORMES.length; i++) {
   ST[INFORMES[i].id] = {resps:[defResps[i]], status:"Pendiente", obs:"", customDate:null};
@@ -168,6 +187,7 @@ var today = new Date(); today.setHours(0,0,0,0);
 var months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 var mSel = document.getElementById("monthSel");
 var ySel = document.getElementById("yearSel");
+var isSaving = false;
 
 for (var mi = 0; mi < months.length; mi++) {
   var mo = document.createElement("option");
@@ -180,6 +200,84 @@ for (var yr = today.getFullYear()-1; yr <= today.getFullYear()+1; yr++) {
   yo.value = yr; yo.textContent = yr;
   if (yr === today.getFullYear()) yo.selected = true;
   ySel.appendChild(yo);
+}
+
+function getDbKey() {
+  return "periodo_" + ySel.value + "_" + String(parseInt(mSel.value)+1).padStart(2,"0");
+}
+
+function setSyncBadge(state) {
+  var el = document.getElementById("syncBadge");
+  if (state === "ok")    { el.className="sync-badge sync-ok";   el.textContent="Sincronizado"; }
+  if (state === "wait")  { el.className="sync-badge sync-wait"; el.textContent="Guardando..."; }
+  if (state === "load")  { el.className="sync-badge sync-wait"; el.textContent="Cargando..."; }
+  if (state === "err")   { el.className="sync-badge sync-err";  el.textContent="Sin conexión"; }
+}
+
+function saveToFirebase() {
+  if (isSaving) return;
+  isSaving = true;
+  setSyncBadge("wait");
+  var key = getDbKey();
+  var data = {};
+  for (var id in ST) {
+    data[id] = {
+      resps: ST[id].resps.join(","),
+      status: ST[id].status,
+      obs: ST[id].obs || "",
+      customDate: ST[id].customDate || ""
+    };
+  }
+  db.ref("cronograma/" + key).set(data, function(error) {
+    isSaving = false;
+    if (error) { setSyncBadge("err"); }
+    else { setSyncBadge("ok"); }
+  });
+}
+
+function loadFromFirebase(callback) {
+  setSyncBadge("load");
+  var key = getDbKey();
+  db.ref("cronograma/" + key).once("value", function(snapshot) {
+    var data = snapshot.val();
+    if (data) {
+      for (var id in data) {
+        if (ST[id] !== undefined) {
+          ST[id].resps = data[id].resps ? data[id].resps.split(",") : [defResps[id]];
+          ST[id].status = data[id].status || "Pendiente";
+          ST[id].obs = data[id].obs || "";
+          ST[id].customDate = data[id].customDate || null;
+        }
+      }
+    }
+    setSyncBadge("ok");
+    document.getElementById("loadingOverlay").style.display = "none";
+    if (callback) callback();
+  }, function(error) {
+    setSyncBadge("err");
+    document.getElementById("loadingOverlay").style.display = "none";
+    if (callback) callback();
+  });
+}
+
+function listenFirebase() {
+  var key = getDbKey();
+  db.ref("cronograma/" + key).on("value", function(snapshot) {
+    if (isSaving) return;
+    var data = snapshot.val();
+    if (data) {
+      for (var id in data) {
+        if (ST[id] !== undefined) {
+          ST[id].resps = data[id].resps ? data[id].resps.split(",") : [defResps[id]];
+          ST[id].status = data[id].status || "Pendiente";
+          ST[id].obs = data[id].obs || "";
+          ST[id].customDate = data[id].customDate || null;
+        }
+      }
+      render();
+      setSyncBadge("ok");
+    }
+  });
 }
 
 function isHabil(d){var w=d.getDay();return w!==0&&w!==6;}
@@ -238,9 +336,9 @@ function renderKPI(){
     "<div class='kpi'><div class='kpi-label'>Vencidos</div><div class='kpi-val c-venc'>"+v+"</div></div>";
 }
 
-function getGrpStyle(cat){
+function getGrpBg(cat){
   var colors={calidad:"#f0eeff",movimiento:"#edf8f3",construccion:"#fdf5e8",prode:"#e8f3fc"};
-  return "background:"+colors[cat]+" !important;";
+  return colors[cat]||"#f5f5f2";
 }
 
 function render(){
@@ -253,10 +351,9 @@ function render(){
     var cat=GRPS[gi];
     var rows=[];
     for(var ii=0;ii<INFORMES.length;ii++){if(INFORMES[ii].cat===cat)rows.push(INFORMES[ii]);}
-
-    var gr=document.createElement("tr"); gr.className="grp-row";
-    gr.setAttribute("style", getGrpStyle(cat));
-    gr.innerHTML="<td colspan='5' style='"+getGrpStyle(cat)+"'><div class='grp-label'>"+
+    var bg=getGrpBg(cat);
+    var gr=document.createElement("tr");gr.className="grp-row";
+    gr.innerHTML="<td colspan='5' style='background:"+bg+";'><div class='grp-label'>"+
       "<span class='grp-dot' style='background:"+CATS[cat].color+";'></span>"+
       "<span class='grp-text' style='color:"+CATS[cat].color+";'>"+CATS[cat].grp+"</span>"+
       "<span class='grp-count'>"+rows.length+" informe"+(rows.length>1?"s":"")+"</span>"+
@@ -265,8 +362,7 @@ function render(){
 
     for(var ri=0;ri<rows.length;ri++){
       var inf=rows[ri];
-      var dl=null;
-      var dateVal="";
+      var dl=null; var dateVal="";
       if(inf.tipo!=="libre"||ST[inf.id].customDate){
         dl=calcDeadline(inf,y,m);
         dateVal=toInputVal(dl);
@@ -292,39 +388,36 @@ function render(){
           "<input type='date' class='date-input' data-id='"+inf.id+"' value='"+dateVal+"'>"+
           "<span class='print-date'>"+printDateTxt+"</span>"+
           "<span class='date-ref'>"+refLabel(inf)+"</span></div></td>"+
-        "<td><div class='resp-cell'>"+
-          respHTML+
+        "<td><div class='resp-cell'>"+respHTML+
           (canAdd?"<button class='btn-add' data-id='"+inf.id+"'>+ agregar responsable</button>":"")+
-          "<span class='print-resp'>"+getNombres(ST[inf.id].resps)+"</span>"+
-        "</div></td>"+
-        "<td>"+
-          "<select class='st-sel "+stClass+"' data-id='"+inf.id+"'>"+
+          "<span class='print-resp'>"+getNombres(ST[inf.id].resps)+"</span></div></td>"+
+        "<td><select class='st-sel "+stClass+"' data-id='"+inf.id+"'>"+
           "<option"+(st==="Pendiente"?" selected":"")+">Pendiente</option>"+
           "<option"+(st==="Emitido"?" selected":"")+">Emitido</option>"+
           "<option"+(st==="Vencido"?" selected":"")+">Vencido</option></select>"+
-          "<span class='print-st st-badge "+stBadgeClass+"'>"+st+"</span>"+
-        "</td>"+
-        "<td>"+
-          "<input class='obs-input' type='text' data-id='"+inf.id+"' placeholder='—' value='"+obsVal+"' maxlength='60'>"+
-          "<span class='print-obs'>"+obsVal+"</span>"+
-        "</td>";
+          "<span class='print-st st-badge "+stBadgeClass+"'>"+st+"</span></td>"+
+        "<td><input class='obs-input' type='text' data-id='"+inf.id+"' placeholder='—' value='"+obsVal+"' maxlength='60'>"+
+          "<span class='print-obs'>"+obsVal+"</span></td>";
       tbody.appendChild(tr);
     }
   }
 
   tbody.querySelectorAll(".date-input").forEach(function(el){
     el.addEventListener("change",function(e){
-      ST[e.target.dataset.id].customDate=e.target.value||null;render();
+      ST[e.target.dataset.id].customDate=e.target.value||null;
+      render(); saveToFirebase();
     });
   });
   tbody.querySelectorAll(".resp-sel").forEach(function(el){
     el.addEventListener("change",function(e){
-      ST[e.target.dataset.id].resps[parseInt(e.target.dataset.idx)]=e.target.value;render();
+      ST[e.target.dataset.id].resps[parseInt(e.target.dataset.idx)]=e.target.value;
+      render(); saveToFirebase();
     });
   });
   tbody.querySelectorAll(".btn-x").forEach(function(el){
     el.addEventListener("click",function(e){
-      var id=e.target.dataset.id;ST[id].resps.splice(parseInt(e.target.dataset.idx),1);render();
+      var id=e.target.dataset.id;ST[id].resps.splice(parseInt(e.target.dataset.idx),1);
+      render(); saveToFirebase();
     });
   });
   tbody.querySelectorAll(".btn-add").forEach(function(el){
@@ -333,16 +426,16 @@ function render(){
       for(var ri=0;ri<RESPS.length;ri++){
         if(used.indexOf(RESPS[ri].sigla)===-1){ST[id].resps.push(RESPS[ri].sigla);break;}
       }
-      render();
+      render(); saveToFirebase();
     });
   });
   tbody.querySelectorAll(".st-sel").forEach(function(el){
     el.addEventListener("change",function(e){
-      var id=e.target.dataset.id;ST[id].status=e.target.value;
+      var id=e.target.dataset.id; ST[id].status=e.target.value;
       e.target.className="st-sel "+(e.target.value==="Emitido"?"st-emitido":e.target.value==="Vencido"?"st-vencido":"st-pendiente");
       var badge=e.target.parentNode.querySelector(".print-st");
       if(badge){badge.className="print-st st-badge "+(e.target.value==="Emitido"?"emit":e.target.value==="Vencido"?"venc":"pend");badge.textContent=e.target.value;}
-      renderKPI();
+      renderKPI(); saveToFirebase();
     });
   });
   tbody.querySelectorAll(".obs-input").forEach(function(el){
@@ -351,14 +444,33 @@ function render(){
       var span=e.target.parentNode.querySelector(".print-obs");
       if(span)span.textContent=e.target.value;
     });
+    el.addEventListener("change",function(e){
+      saveToFirebase();
+    });
   });
   renderKPI();
 }
 
+function changePeriod() {
+  for(var i=0;i<INFORMES.length;i++){
+    ST[INFORMES[i].id]={resps:[defResps[i]],status:"Pendiente",obs:"",customDate:null};
+  }
+  db.ref("cronograma/"+getDbKey()).off();
+  document.getElementById("loadingOverlay").style.display="flex";
+  loadFromFirebase(function(){
+    render();
+    listenFirebase();
+  });
+}
+
 document.getElementById("btnFinalizar").addEventListener("click",function(){window.print();});
-mSel.addEventListener("change",render);
-ySel.addEventListener("change",render);
-render();
+mSel.addEventListener("change", changePeriod);
+ySel.addEventListener("change", changePeriod);
+
+loadFromFirebase(function(){
+  render();
+  listenFirebase();
+});
 </script>
 </body>
 </html>
