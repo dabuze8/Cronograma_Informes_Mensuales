@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma de Informes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f2;padding:1rem;}
+.dash{max-width:1100px;margin:0 auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem;padding-top:0.5rem;}
+.dash-title{font-size:18px;font-weight:600;color:#1a1a18;}
+.period-row{display:flex;align-items:center;gap:8px;}
+.period-row label{font-size:12px;color:#5f5e5a;}
+.period-row select{font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a18;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.kpi{background:#e8e8e4;border-radius:8px;padding:14px 16px;}
+.kpi-label{font-size:11px;color:#5f5e5a;margin-bottom:6px;}
+.kpi-val{font-size:26px;font-weight:600;}
+.c-total{color:#1a1a18;}.c-emit{color:#3B6D11;}.c-pend{color:#5F5E5A;}.c-venc{color:#A32D2D;}
+.panel{background:#fff;border:1px solid #ddd;border-radius:12px;overflow:hidden;margin-bottom:1rem;}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{font-size:10px;font-weight:600;color:#5f5e5a;text-transform:uppercase;letter-spacing:.05em;padding:10px 12px;border-bottom:1px solid #e0e0e0;text-align:left;white-space:nowrap;background:#fafafa;}
+tbody tr{border-bottom:1px solid #f0f0f0;}
+tbody tr:nth-child(even){background:#fafafa;}
+tbody td{padding:10px 12px;vertical-align:top;}
+.grp-row td{padding:6px 12px;}
+.grp-label{display:flex;align-items:center;gap:8px;}
+.grp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.grp-text{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5f5e5a;}
+.grp-count{font-size:10px;color:#888;margin-left:auto;}
+.inf-name{font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:2px;}
+.inf-sub{font-size:11px;color:#888;}
+.cat-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;margin-bottom:4px;font-weight:500;}
+.cat-calidad{background:#EEEDFE;color:#3C3489;}
+.cat-movimiento{background:#E1F5EE;color:#085041;}
+.cat-construccion{background:#FAEEDA;color:#633806;}
+.cat-prode{background:#E6F1FB;color:#0C447C;}
+.date-wrap{display:flex;flex-direction:column;gap:3px;}
+.date-input{font-size:12px;padding:5px 7px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;}
+.date-ref{font-size:10px;color:#888;margin-top:2px;}
+.resp-cell{display:flex;flex-direction:column;gap:4px;}
+.resp-row-wrap{display:flex;align-items:center;gap:4px;}
+.resp-sel{font-size:12px;padding:5px 6px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a18;flex:1;min-width:0;}
+.btn-x{font-size:14px;background:none;border:none;cursor:pointer;color:#999;padding:2px 5px;line-height:1;}
+.btn-add{font-size:11px;color:#888;background:none;border:1px dashed #ccc;border-radius:6px;padding:4px 8px;cursor:pointer;width:100%;text-align:left;margin-top:2px;}
+.st-sel{font-size:12px;padding:5px 7px;border-radius:6px;border:1px solid #ccc;width:100%;background:#fff;color:#1a1a18;}
+.st-emitido{background:#EAF3DE;color:#3B6D11;border-color:#97C459;}
+.st-pendiente{background:#F5F5F0;color:#5F5E5A;border-color:#ccc;}
+.st-vencido{background:#FCEBEB;color:#A32D2D;border-color:#F09595;}
+.obs-input{font-size:11px;padding:5px 7px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;}
+.btn-finalizar-wrap{display:flex;justify-content:flex-end;margin-bottom:1.5rem;}
+.btn-finalizar{background:#1a1a18;color:#fff;font-size:14px;font-weight:600;padding:10px 28px;border:none;border-radius:8px;cursor:pointer;}
+.btn-finalizar:hover{background:#3a3a38;}
+.btn-finalizar:active{transform:scale(0.98);}
+
+@media print {
+  @page{size:A4 landscape;margin:15mm 12mm;}
+  body{background:#fff !important;padding:0 !important;}
+  .btn-finalizar-wrap{display:none !important;}
+  .period-row{display:none !important;}
+  .date-input,.resp-sel,.st-sel,.obs-input,.btn-x,.btn-add{display:none !important;}
+  .print-date,.print-resp,.print-st,.print-obs{display:block !important;}
+  .dash{max-width:100% !important;}
+  .panel{border:1px solid #ccc !important;border-radius:0 !important;page-break-inside:avoid;}
+  .kpi-row{margin-bottom:10mm;}
+  .kpi{border:1px solid #ddd !important;}
+  table{font-size:10px !important;}
+  thead th{font-size:9px !important;background:#f0f0ec !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .grp-row td{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .cat-pill,.kpi{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .st-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .st-badge.emit{background:#EAF3DE;color:#3B6D11;}
+  .st-badge.pend{background:#F5F5F0;color:#5F5E5A;}
+  .st-badge.venc{background:#FCEBEB;color:#A32D2D;}
+  .kpi{background:#e8e8e4 !important;}
+  .topbar{margin-bottom:8mm;}
+  .print-header-period{display:block !important;font-size:12px;color:#5f5e5a;margin-top:2px;}
+}
+.print-date,.print-resp,.print-st,.print-obs,.print-header-period{display:none;}
+
+@media(max-width:600px){
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .dash-title{font-size:16px;}
+  table{font-size:11px;}
+  tbody td{padding:8px 8px;}
+}
+</style>
+</head>
+<body>
+<div class="dash">
+  <div class="topbar">
+    <div>
+      <span class="dash-title">Cronograma de informes</span>
+      <span class="print-header-period" id="printPeriod"></span>
+    </div>
+    <div class="period-row">
+      <label>Período</label>
+      <select id="monthSel"></select>
+      <select id="yearSel"></select>
+    </div>
+  </div>
+
+  <div class="btn-finalizar-wrap">
+    <button class="btn-finalizar" id="btnFinalizar">Finalizar — Generar PDF</button>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="panel">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:26%;">Informe</th>
+            <th style="width:17%;">Fecha límite</th>
+            <th style="width:28%;">Responsable(s)</th>
+            <th style="width:15%;">Estado</th>
+            <th style="width:14%;">Observación</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+var RESPS = [
+  {sigla:"MC", nombre:"Matia Cardozo"},
+  {sigla:"JM", nombre:"Jhonatan Medrano"},
+  {sigla:"FP", nombre:"Felipe Pinto"},
+  {sigla:"AG", nombre:"Alex Garcia"},
+  {sigla:"RB", nombre:"Ruben Condori"},
+  {sigla:"NA", nombre:"N/A"}
+];
+
+var INFORMES = [
+  {id:0,  nombre:"Calidad PSLCVQ",                 detalle:"Planta PSLCVQ",        cat:"calidad",      tipo:"penultimo"},
+  {id:1,  nombre:"Calidad PSLRGD",                  detalle:"Planta PSLRGD",        cat:"calidad",      tipo:"penultimo"},
+  {id:2,  nombre:"Mov. Producto PSLCVQ",            detalle:"Planta PSLCVQ",        cat:"movimiento",   tipo:"habil_fin", off:5},
+  {id:3,  nombre:"Mov. Producto PSLRGD",            detalle:"Planta PSLRGD",        cat:"movimiento",   tipo:"habil_fin", off:5},
+  {id:4,  nombre:"Mov. Producto PAU",               detalle:"Planta PAU",           cat:"movimiento",   tipo:"habil_fin", off:5},
+  {id:5,  nombre:"Mov. Producto GNL",               detalle:"ERS / STGNL / PGNL",   cat:"movimiento",   tipo:"habil_fin", off:5},
+  {id:6,  nombre:"Avance Construcción PORCO",       detalle:"Proyecto Porco",       cat:"construccion", tipo:"habil_fin", off:3},
+  {id:7,  nombre:"Avance Construcción VALLEGRANDE", detalle:"Proyecto Vallegrande", cat:"construccion", tipo:"habil_fin", off:3},
+  {id:8,  nombre:"Avance Construcción CONCEPCIÓN",  detalle:"Proyecto Concepción",  cat:"construccion", tipo:"habil_fin", off:3},
+  {id:9,  nombre:"Informe de Balance",              detalle:"PRODE",                cat:"prode",        tipo:"libre"},
+  {id:10, nombre:"Informe de Programación PSL",     detalle:"PRODE",                cat:"prode",        tipo:"libre"}
+];
+
+var CATS = {
+  calidad:      {label:"Calidad",       color:"#7F77DD", pill:"cat-calidad",      grp:"Informes de calidad"},
+  movimiento:   {label:"Mov. Producto", color:"#1D9E75", pill:"cat-movimiento",   grp:"Informes de movimiento de producto"},
+  construccion: {label:"Construcción",  color:"#BA7517", pill:"cat-construccion", grp:"Informes de avance de construcción"},
+  prode:        {label:"PRODE",         color:"#378ADD", pill:"cat-prode",        grp:"Informes PRODE"}
+};
+var GRPS = ["calidad","movimiento","construccion","prode"];
+
+var defResps = ["MC","MC","MC","MC","FP","JM","FP","FP","FP","NA","NA"];
+var ST = {};
+for (var i = 0; i < INFORMES.length; i++) {
+  ST[INFORMES[i].id] = {resps:[defResps[i]], status:"Pendiente", obs:"", customDate:null};
+}
+
+var today = new Date(); today.setHours(0,0,0,0);
+var months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+var mSel = document.getElementById("monthSel");
+var ySel = document.getElementById("yearSel");
+
+for (var mi = 0; mi < months.length; mi++) {
+  var mo = document.createElement("option");
+  mo.value = mi; mo.textContent = months[mi];
+  if (mi === today.getMonth()) mo.selected = true;
+  mSel.appendChild(mo);
+}
+for (var yr = today.getFullYear()-1; yr <= today.getFullYear()+1; yr++) {
+  var yo = document.createElement("option");
+  yo.value = yr; yo.textContent = yr;
+  if (yr === today.getFullYear()) yo.selected = true;
+  ySel.appendChild(yo);
+}
+
+function isHabil(d){var w=d.getDay();return w!==0&&w!==6;}
+function habitDays(y,m){
+  var ds=[];var d=new Date(y,m,1);
+  while(d.getMonth()===m){if(isHabil(d))ds.push(new Date(d));d.setDate(d.getDate()+1);}
+  return ds;
+}
+function calcDeadline(inf,y,m){
+  if(ST[inf.id].customDate) return new Date(ST[inf.id].customDate+"T00:00:00");
+  var h=habitDays(y,m); var n=h.length;
+  if(inf.tipo==="penultimo") return h[n-2];
+  if(inf.tipo==="habil_fin") return h[Math.max(0,n-inf.off)];
+  return h[n-1];
+}
+function refLabel(inf){
+  if(ST[inf.id].customDate) return "Fecha personalizada";
+  if(inf.tipo==="penultimo") return "Penúltimo día hábil";
+  if(inf.tipo==="habil_fin") return inf.off+"° hábil desde fin";
+  if(inf.tipo==="libre") return "Seleccionar fecha";
+  return "Último día hábil";
+}
+function toInputVal(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function fmtDate(d){
+  return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
+}
+function respOpts(sel){
+  var html="";
+  for(var i=0;i<RESPS.length;i++){
+    html+="<option value='"+RESPS[i].sigla+"'"+(sel===RESPS[i].sigla?" selected":"")+">"+RESPS[i].nombre+"</option>";
+  }
+  return html;
+}
+function getNombres(resps){
+  var names=[];
+  for(var i=0;i<resps.length;i++){
+    for(var j=0;j<RESPS.length;j++){
+      if(RESPS[j].sigla===resps[i]){names.push(RESPS[j].nombre);break;}
+    }
+  }
+  return names.join(", ");
+}
+
+function renderKPI(){
+  var e=0,p=0,v=0;
+  for(var i=0;i<INFORMES.length;i++){
+    var s=ST[INFORMES[i].id].status;
+    if(s==="Emitido")e++;else if(s==="Vencido")v++;else p++;
+  }
+  document.getElementById("kpiRow").innerHTML=
+    "<div class='kpi'><div class='kpi-label'>Total</div><div class='kpi-val c-total'>"+INFORMES.length+"</div></div>"+
+    "<div class='kpi'><div class='kpi-label'>Emitidos</div><div class='kpi-val c-emit'>"+e+"</div></div>"+
+    "<div class='kpi'><div class='kpi-label'>Pendientes</div><div class='kpi-val c-pend'>"+p+"</div></div>"+
+    "<div class='kpi'><div class='kpi-label'>Vencidos</div><div class='kpi-val c-venc'>"+v+"</div></div>";
+}
+
+function getGrpStyle(cat){
+  var colors={calidad:"#f0eeff",movimiento:"#edf8f3",construccion:"#fdf5e8",prode:"#e8f3fc"};
+  return "background:"+colors[cat]+" !important;";
+}
+
+function render(){
+  var y=parseInt(ySel.value); var m=parseInt(mSel.value);
+  document.getElementById("printPeriod").textContent="Período: "+months[m]+" "+y;
+  var tbody=document.getElementById("tbody");
+  tbody.innerHTML="";
+
+  for(var gi=0;gi<GRPS.length;gi++){
+    var cat=GRPS[gi];
+    var rows=[];
+    for(var ii=0;ii<INFORMES.length;ii++){if(INFORMES[ii].cat===cat)rows.push(INFORMES[ii]);}
+
+    var gr=document.createElement("tr"); gr.className="grp-row";
+    gr.setAttribute("style", getGrpStyle(cat));
+    gr.innerHTML="<td colspan='5' style='"+getGrpStyle(cat)+"'><div class='grp-label'>"+
+      "<span class='grp-dot' style='background:"+CATS[cat].color+";'></span>"+
+      "<span class='grp-text' style='color:"+CATS[cat].color+";'>"+CATS[cat].grp+"</span>"+
+      "<span class='grp-count'>"+rows.length+" informe"+(rows.length>1?"s":"")+"</span>"+
+      "</div></td>";
+    tbody.appendChild(gr);
+
+    for(var ri=0;ri<rows.length;ri++){
+      var inf=rows[ri];
+      var dl=null;
+      var dateVal="";
+      if(inf.tipo!=="libre"||ST[inf.id].customDate){
+        dl=calcDeadline(inf,y,m);
+        dateVal=toInputVal(dl);
+      }
+      var st=ST[inf.id].status;
+      var stClass=st==="Emitido"?"st-emitido":st==="Vencido"?"st-vencido":"st-pendiente";
+      var stBadgeClass=st==="Emitido"?"emit":st==="Vencido"?"venc":"pend";
+      var respHTML="";
+      for(var rri=0;rri<ST[inf.id].resps.length;rri++){
+        respHTML+="<div class='resp-row-wrap'>"+
+          "<select class='resp-sel' data-id='"+inf.id+"' data-idx='"+rri+"'>"+respOpts(ST[inf.id].resps[rri])+"</select>"+
+          (ST[inf.id].resps.length>1?"<button class='btn-x' data-id='"+inf.id+"' data-idx='"+rri+"'>×</button>":"")+
+          "</div>";
+      }
+      var canAdd=ST[inf.id].resps.length<RESPS.length;
+      var obsVal=ST[inf.id].obs||"";
+      var printDateTxt=dl?fmtDate(dl):"—";
+      var tr=document.createElement("tr");
+      tr.innerHTML=
+        "<td><span class='cat-pill "+CATS[cat].pill+"'>"+CATS[cat].label+"</span>"+
+        "<div class='inf-name'>"+inf.nombre+"</div><div class='inf-sub'>"+inf.detalle+"</div></td>"+
+        "<td><div class='date-wrap'>"+
+          "<input type='date' class='date-input' data-id='"+inf.id+"' value='"+dateVal+"'>"+
+          "<span class='print-date'>"+printDateTxt+"</span>"+
+          "<span class='date-ref'>"+refLabel(inf)+"</span></div></td>"+
+        "<td><div class='resp-cell'>"+
+          respHTML+
+          (canAdd?"<button class='btn-add' data-id='"+inf.id+"'>+ agregar responsable</button>":"")+
+          "<span class='print-resp'>"+getNombres(ST[inf.id].resps)+"</span>"+
+        "</div></td>"+
+        "<td>"+
+          "<select class='st-sel "+stClass+"' data-id='"+inf.id+"'>"+
+          "<option"+(st==="Pendiente"?" selected":"")+">Pendiente</option>"+
+          "<option"+(st==="Emitido"?" selected":"")+">Emitido</option>"+
+          "<option"+(st==="Vencido"?" selected":"")+">Vencido</option></select>"+
+          "<span class='print-st st-badge "+stBadgeClass+"'>"+st+"</span>"+
+        "</td>"+
+        "<td>"+
+          "<input class='obs-input' type='text' data-id='"+inf.id+"' placeholder='—' value='"+obsVal+"' maxlength='60'>"+
+          "<span class='print-obs'>"+obsVal+"</span>"+
+        "</td>";
+      tbody.appendChild(tr);
+    }
+  }
+
+  tbody.querySelectorAll(".date-input").forEach(function(el){
+    el.addEventListener("change",function(e){
+      ST[e.target.dataset.id].customDate=e.target.value||null;render();
+    });
+  });
+  tbody.querySelectorAll(".resp-sel").forEach(function(el){
+    el.addEventListener("change",function(e){
+      ST[e.target.dataset.id].resps[parseInt(e.target.dataset.idx)]=e.target.value;render();
+    });
+  });
+  tbody.querySelectorAll(".btn-x").forEach(function(el){
+    el.addEventListener("click",function(e){
+      var id=e.target.dataset.id;ST[id].resps.splice(parseInt(e.target.dataset.idx),1);render();
+    });
+  });
+  tbody.querySelectorAll(".btn-add").forEach(function(el){
+    el.addEventListener("click",function(e){
+      var id=e.target.dataset.id;var used=ST[id].resps;
+      for(var ri=0;ri<RESPS.length;ri++){
+        if(used.indexOf(RESPS[ri].sigla)===-1){ST[id].resps.push(RESPS[ri].sigla);break;}
+      }
+      render();
+    });
+  });
+  tbody.querySelectorAll(".st-sel").forEach(function(el){
+    el.addEventListener("change",function(e){
+      var id=e.target.dataset.id;ST[id].status=e.target.value;
+      e.target.className="st-sel "+(e.target.value==="Emitido"?"st-emitido":e.target.value==="Vencido"?"st-vencido":"st-pendiente");
+      var badge=e.target.parentNode.querySelector(".print-st");
+      if(badge){badge.className="print-st st-badge "+(e.target.value==="Emitido"?"emit":e.target.value==="Vencido"?"venc":"pend");badge.textContent=e.target.value;}
+      renderKPI();
+    });
+  });
+  tbody.querySelectorAll(".obs-input").forEach(function(el){
+    el.addEventListener("input",function(e){
+      ST[e.target.dataset.id].obs=e.target.value;
+      var span=e.target.parentNode.querySelector(".print-obs");
+      if(span)span.textContent=e.target.value;
+    });
+  });
+  renderKPI();
+}
+
+document.getElementById("btnFinalizar").addEventListener("click",function(){window.print();});
+mSel.addEventListener("change",render);
+ySel.addEventListener("change",render);
+render();
+</script>
+</body>
+</html>
