@@ -366,15 +366,22 @@ function generateICS() {
 function downloadICS() {
   var y=parseInt(ySel.value); var m=parseInt(mSel.value);
   var content=generateICS();
-  var blob=new Blob([content],{type:"text/calendar;charset=utf-8"});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement("a");
-  a.href=url;
-  a.download="cronograma_"+months[m]+"_"+y+".ics";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  var isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  if(isIOS||isSafari){
+    var dataUri="data:text/calendar;charset=utf-8,"+encodeURIComponent(content);
+    window.open(dataUri,"_blank");
+  } else {
+    var blob=new Blob([content],{type:"text/calendar;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url;
+    a.download="cronograma_"+months[m]+"_"+y+".ics";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }
 
 function renderKPI(){
