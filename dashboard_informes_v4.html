@@ -34,13 +34,18 @@ tbody td{padding:10px 12px;vertical-align:top;}
 .grp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .grp-text{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 .grp-count{font-size:10px;color:#888;margin-left:auto;}
+.grp-addbtn{font-size:10px;background:none;border:1px dashed #ccc;border-radius:6px;padding:2px 10px;cursor:pointer;color:#5f5e5a;margin-left:8px;white-space:nowrap;}
+.grp-addbtn:hover{background:#f5f5f2;}
 .inf-name{font-size:12px;font-weight:600;color:#1a1a18;margin-bottom:2px;}
 .inf-sub{font-size:11px;color:#888;}
+.inf-name-input{font-size:12px;font-weight:600;padding:3px 6px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;margin-bottom:3px;}
+.inf-sub-input{font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#888;width:100%;}
 .cat-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;margin-bottom:4px;font-weight:500;}
 .cat-calidad{background:#EEEDFE;color:#3C3489;}
 .cat-movimiento{background:#E1F5EE;color:#085041;}
 .cat-construccion{background:#FAEEDA;color:#633806;}
 .cat-prode{background:#E6F1FB;color:#0C447C;}
+.cat-custom{background:#F1EFE8;color:#444441;}
 .date-wrap{display:flex;flex-direction:column;gap:3px;}
 .date-input{font-size:12px;padding:5px 7px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;}
 .date-ref{font-size:10px;color:#888;margin-top:2px;}
@@ -54,24 +59,40 @@ tbody td{padding:10px 12px;vertical-align:top;}
 .st-pendiente{background:#F5F5F0;color:#5F5E5A;border-color:#ccc;}
 .st-vencido{background:#FCEBEB;color:#A32D2D;border-color:#F09595;}
 .obs-input{font-size:11px;padding:5px 7px;border-radius:6px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;}
+.btn-del-row{font-size:13px;background:none;border:none;cursor:pointer;color:#ccc;padding:2px 4px;line-height:1;display:block;margin-top:4px;}
+.btn-del-row:hover{color:#A32D2D;}
 .action-bar{display:flex;justify-content:flex-end;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;}
 .btn-finalizar{background:#1a1a18;color:#fff;font-size:14px;font-weight:600;padding:10px 28px;border:none;border-radius:8px;cursor:pointer;}
 .btn-finalizar:hover{background:#3a3a38;}
 .btn-calendar{background:#fff;color:#185FA5;font-size:14px;font-weight:600;padding:10px 22px;border:1.5px solid #185FA5;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:7px;}
 .btn-calendar:hover{background:#E6F1FB;}
 .btn-calendar svg{width:16px;height:16px;flex-shrink:0;}
+/* Modal nueva categoría */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:12px;padding:24px;width:90%;max-width:420px;}
+.modal-title{font-size:15px;font-weight:600;color:#1a1a18;margin-bottom:16px;}
+.modal-field{margin-bottom:12px;}
+.modal-field label{font-size:12px;color:#5f5e5a;display:block;margin-bottom:4px;}
+.modal-field input{font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;}
+.modal-field input[type=color]{padding:2px 4px;height:36px;cursor:pointer;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.btn-modal-cancel{font-size:13px;padding:7px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#5f5e5a;cursor:pointer;}
+.btn-modal-ok{font-size:13px;padding:7px 18px;border-radius:8px;border:none;background:#1a1a18;color:#fff;cursor:pointer;}
+.add-cat-section{padding:10px 12px;border-top:1px solid #f0f0f0;}
+.btn-new-cat{font-size:12px;color:#5f5e5a;background:none;border:1px dashed #ccc;border-radius:8px;padding:6px 16px;cursor:pointer;width:100%;}
+.btn-new-cat:hover{background:#f5f5f2;}
 .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(245,245,242,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
 .loading-spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:#1a1a18;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:14px;color:#5f5e5a;}
-
 @media print {
   @page{size:A4 landscape;margin:15mm 12mm;}
   body{background:#fff !important;padding:0 !important;}
-  .action-bar,.sync-badge,.loading-overlay{display:none !important;}
+  .action-bar,.sync-badge,.loading-overlay,.modal-overlay,.add-cat-section,.grp-addbtn,.btn-del-row{display:none !important;}
   .period-row{display:none !important;}
-  .date-input,.resp-sel,.st-sel,.obs-input,.btn-x,.btn-add{display:none !important;}
-  .print-date,.print-resp,.print-st,.print-obs{display:block !important;}
+  .date-input,.resp-sel,.st-sel,.obs-input,.btn-x,.btn-add,.inf-name-input,.inf-sub-input{display:none !important;}
+  .print-date,.print-resp,.print-st,.print-obs,.print-name,.print-sub{display:block !important;}
   .dash{max-width:100% !important;}
   .panel{border:1px solid #ccc !important;border-radius:0 !important;}
   .kpi{background:#e8e8e4 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
@@ -85,8 +106,7 @@ tbody td{padding:10px 12px;vertical-align:top;}
   .st-badge.venc{background:#FCEBEB;color:#A32D2D;}
   .print-header-period{display:block !important;font-size:12px;color:#5f5e5a;margin-top:2px;}
 }
-.print-date,.print-resp,.print-st,.print-obs,.print-header-period{display:none;}
-
+.print-date,.print-resp,.print-st,.print-obs,.print-header-period,.print-name,.print-sub{display:none;}
 @media(max-width:600px){
   .kpi-row{grid-template-columns:repeat(2,1fr);}
   .dash-title{font-size:16px;}
@@ -102,6 +122,35 @@ tbody td{padding:10px 12px;vertical-align:top;}
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
   <div class="loading-text">Cargando datos...</div>
+</div>
+
+<!-- Modal nueva categoría -->
+<div class="modal-overlay" id="modalCat">
+  <div class="modal-box">
+    <div class="modal-title">Nueva categoría</div>
+    <div class="modal-field"><label>Nombre de la categoría</label><input type="text" id="newCatName" placeholder="Ej: Planificación" maxlength="30"></div>
+    <div class="modal-field"><label>Color</label><input type="color" id="newCatColor" value="#888780"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="btnCatCancel">Cancelar</button>
+      <button class="btn-modal-ok" id="btnCatOk">Crear categoría</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nueva fila -->
+<div class="modal-overlay" id="modalRow">
+  <div class="modal-box">
+    <div class="modal-title">Agregar informe / actividad</div>
+    <div class="modal-field"><label>Nombre</label><input type="text" id="newRowName" placeholder="Ej: Informe de Ventas" maxlength="60"></div>
+    <div class="modal-field"><label>Detalle</label><input type="text" id="newRowDetail" placeholder="Ej: Área comercial" maxlength="60"></div>
+    <div class="modal-field"><label>Categoría</label>
+      <select id="newRowCat" style="font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a18;width:100%;"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="btnRowCancel">Cancelar</button>
+      <button class="btn-modal-ok" id="btnRowOk">Agregar</button>
+    </div>
+  </div>
 </div>
 
 <div class="dash">
@@ -142,15 +191,19 @@ tbody td{padding:10px 12px;vertical-align:top;}
       <table>
         <thead>
           <tr>
-            <th style="width:26%;">Informe</th>
-            <th style="width:17%;">Fecha límite</th>
-            <th style="width:28%;">Responsable(s)</th>
-            <th style="width:15%;">Estado</th>
-            <th style="width:14%;">Observación</th>
+            <th style="width:24%;">Informe / Actividad</th>
+            <th style="width:16%;">Fecha límite</th>
+            <th style="width:27%;">Responsable(s)</th>
+            <th style="width:14%;">Estado</th>
+            <th style="width:13%;">Observación</th>
+            <th style="width:6%;"></th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
+    </div>
+    <div class="add-cat-section">
+      <button class="btn-new-cat" id="btnNewCat">+ Nueva categoría</button>
     </div>
   </div>
 </div>
@@ -158,99 +211,107 @@ tbody td{padding:10px 12px;vertical-align:top;}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-var firebaseConfig = {
-  databaseURL: "https://cronograma-informes-8c976-default-rtdb.firebaseio.com"
-};
-firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
+firebase.initializeApp({databaseURL:"https://cronograma-informes-8c976-default-rtdb.firebaseio.com"});
+var db=firebase.database();
 
-var RESPS = [
-  {sigla:"MC", nombre:"Matia Cardozo"},
-  {sigla:"JM", nombre:"Jhonatan Medrano"},
-  {sigla:"FP", nombre:"Felipe Pinto"},
-  {sigla:"AG", nombre:"Alex Garcia"},
-  {sigla:"RB", nombre:"Ruben Condori"},
-  {sigla:"NA", nombre:"N/A"}
+var RESPS=[
+  {sigla:"MC",nombre:"Matia Cardozo"},
+  {sigla:"JM",nombre:"Jhonatan Medrano"},
+  {sigla:"FP",nombre:"Felipe Pinto"},
+  {sigla:"AG",nombre:"Alex Garcia"},
+  {sigla:"RB",nombre:"Ruben Condori"},
+  {sigla:"NA",nombre:"N/A"}
 ];
 
-var INFORMES = [
-  {id:0,  nombre:"Calidad PSLCVQ",                 detalle:"Planta PSLCVQ",        cat:"calidad",      tipo:"penultimo"},
-  {id:1,  nombre:"Calidad PSLRGD",                  detalle:"Planta PSLRGD",        cat:"calidad",      tipo:"penultimo"},
-  {id:2,  nombre:"Mov. Producto PSLCVQ",            detalle:"Planta PSLCVQ",        cat:"movimiento",   tipo:"habil_fin", off:5},
-  {id:3,  nombre:"Mov. Producto PSLRGD",            detalle:"Planta PSLRGD",        cat:"movimiento",   tipo:"habil_fin", off:5},
-  {id:4,  nombre:"Mov. Producto PAU",               detalle:"Planta PAU",           cat:"movimiento",   tipo:"habil_fin", off:5},
-  {id:5,  nombre:"Mov. Producto GNL",               detalle:"ERS / STGNL / PGNL",   cat:"movimiento",   tipo:"habil_fin", off:5},
-  {id:6,  nombre:"Avance Construcción PORCO",       detalle:"Proyecto Porco",       cat:"construccion", tipo:"habil_fin", off:3},
-  {id:7,  nombre:"Avance Construcción VALLEGRANDE", detalle:"Proyecto Vallegrande", cat:"construccion", tipo:"habil_fin", off:3},
-  {id:8,  nombre:"Avance Construcción CONCEPCIÓN",  detalle:"Proyecto Concepción",  cat:"construccion", tipo:"habil_fin", off:3},
-  {id:9,  nombre:"Informe de Balance",              detalle:"PRODE",                cat:"prode",        tipo:"libre"},
-  {id:10, nombre:"Informe de Programación PSL",     detalle:"PRODE",                cat:"prode",        tipo:"libre"}
-];
-
-var CATS = {
-  calidad:      {label:"Calidad",       color:"#7F77DD", pill:"cat-calidad",      grp:"Informes de calidad"},
-  movimiento:   {label:"Mov. Producto", color:"#1D9E75", pill:"cat-movimiento",   grp:"Informes de movimiento de producto"},
-  construccion: {label:"Construcción",  color:"#BA7517", pill:"cat-construccion", grp:"Informes de avance de construcción"},
-  prode:        {label:"PRODE",         color:"#378ADD", pill:"cat-prode",        grp:"Informes PRODE"}
+var BASE_CATS={
+  calidad:     {label:"Calidad",      color:"#7F77DD",grp:"Informes de calidad"},
+  movimiento:  {label:"Mov. Producto",color:"#1D9E75",grp:"Informes de movimiento de producto"},
+  construccion:{label:"Construcción", color:"#BA7517",grp:"Informes de avance de construcción"},
+  prode:       {label:"PRODE",        color:"#378ADD",grp:"Informes PRODE"}
 };
-var GRPS = ["calidad","movimiento","construccion","prode"];
-var defResps = ["MC","MC","MC","MC","FP","JM","FP","FP","FP","NA","NA"];
 
-var ST = {};
-for (var i = 0; i < INFORMES.length; i++) {
-  ST[INFORMES[i].id] = {resps:[defResps[i]], status:"Pendiente", obs:"", customDate:null};
+var BASE_INFORMES=[
+  {id:"b0", nombre:"Calidad PSLCVQ",                detalle:"Planta PSLCVQ",       cat:"calidad",      tipo:"penultimo",  base:true},
+  {id:"b1", nombre:"Calidad PSLRGD",                 detalle:"Planta PSLRGD",       cat:"calidad",      tipo:"penultimo",  base:true},
+  {id:"b2", nombre:"Mov. Producto PSLCVQ",           detalle:"Planta PSLCVQ",       cat:"movimiento",   tipo:"habil_fin",off:5,base:true},
+  {id:"b3", nombre:"Mov. Producto PSLRGD",           detalle:"Planta PSLRGD",       cat:"movimiento",   tipo:"habil_fin",off:5,base:true},
+  {id:"b4", nombre:"Mov. Producto PAU",              detalle:"Planta PAU",          cat:"movimiento",   tipo:"habil_fin",off:5,base:true},
+  {id:"b5", nombre:"Mov. Producto GNL",              detalle:"ERS / STGNL / PGNL",  cat:"movimiento",   tipo:"habil_fin",off:5,base:true},
+  {id:"b6", nombre:"Avance Construcción PORCO",      detalle:"Proyecto Porco",      cat:"construccion", tipo:"habil_fin",off:3,base:true},
+  {id:"b7", nombre:"Avance Construcción VALLEGRANDE",detalle:"Proyecto Vallegrande",cat:"construccion", tipo:"habil_fin",off:3,base:true},
+  {id:"b8", nombre:"Avance Construcción CONCEPCIÓN", detalle:"Proyecto Concepción", cat:"construccion", tipo:"habil_fin",off:3,base:true},
+  {id:"b9", nombre:"Informe de Balance",             detalle:"PRODE",               cat:"prode",        tipo:"libre",      base:true},
+  {id:"b10",nombre:"Informe de Programación PSL",    detalle:"PRODE",               cat:"prode",        tipo:"libre",      base:true}
+];
+var BASE_RESPS=["MC","MC","MC","MC","FP","JM","FP","FP","FP","NA","NA"];
+
+var CATS={};
+var INFORMES=[];
+var ST={};
+var isSaving=false;
+var today=new Date();today.setHours(0,0,0,0);
+var months=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+var mSel=document.getElementById("monthSel");
+var ySel=document.getElementById("yearSel");
+
+for(var mi=0;mi<months.length;mi++){
+  var mo=document.createElement("option");mo.value=mi;mo.textContent=months[mi];
+  if(mi===today.getMonth())mo.selected=true;mSel.appendChild(mo);
+}
+for(var yr=today.getFullYear()-1;yr<=today.getFullYear()+1;yr++){
+  var yo=document.createElement("option");yo.value=yr;yo.textContent=yr;
+  if(yr===today.getFullYear())yo.selected=true;ySel.appendChild(yo);
 }
 
-var today = new Date(); today.setHours(0,0,0,0);
-var months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-var mSel = document.getElementById("monthSel");
-var ySel = document.getElementById("yearSel");
-var isSaving = false;
+function getDbKey(){return "periodo_"+ySel.value+"_"+String(parseInt(mSel.value)+1).padStart(2,"0");}
+function getMetaKey(){return "meta";}
 
-for (var mi = 0; mi < months.length; mi++) {
-  var mo = document.createElement("option");
-  mo.value = mi; mo.textContent = months[mi];
-  if (mi === today.getMonth()) mo.selected = true;
-  mSel.appendChild(mo);
-}
-for (var yr = today.getFullYear()-1; yr <= today.getFullYear()+1; yr++) {
-  var yo = document.createElement("option");
-  yo.value = yr; yo.textContent = yr;
-  if (yr === today.getFullYear()) yo.selected = true;
-  ySel.appendChild(yo);
+function setSyncBadge(s){
+  var el=document.getElementById("syncBadge");
+  if(s==="ok")  {el.className="sync-badge sync-ok"; el.textContent="Sincronizado";}
+  if(s==="wait"){el.className="sync-badge sync-wait";el.textContent="Guardando...";}
+  if(s==="load"){el.className="sync-badge sync-wait";el.textContent="Cargando...";}
+  if(s==="err") {el.className="sync-badge sync-err"; el.textContent="Sin conexión";}
 }
 
-function getDbKey() {
-  return "periodo_"+ySel.value+"_"+String(parseInt(mSel.value)+1).padStart(2,"0");
+function saveMeta(cb){
+  var meta={cats:{},customInformes:[]};
+  for(var k in CATS){if(!BASE_CATS[k])meta.cats[k]=CATS[k];}
+  for(var i=0;i<INFORMES.length;i++){if(!INFORMES[i].base)meta.customInformes.push(INFORMES[i]);}
+  db.ref("meta").set(meta,function(e){if(cb)cb();});
 }
-function setSyncBadge(state) {
-  var el = document.getElementById("syncBadge");
-  if(state==="ok")   {el.className="sync-badge sync-ok";  el.textContent="Sincronizado";}
-  if(state==="wait") {el.className="sync-badge sync-wait";el.textContent="Guardando...";}
-  if(state==="load") {el.className="sync-badge sync-wait";el.textContent="Cargando...";}
-  if(state==="err")  {el.className="sync-badge sync-err"; el.textContent="Sin conexión";}
+
+function saveToFirebase(){
+  if(isSaving)return;isSaving=true;setSyncBadge("wait");
+  var key=getDbKey();var data={};
+  for(var id in ST){data[id]={resps:ST[id].resps.join(","),status:ST[id].status,obs:ST[id].obs||"",customDate:ST[id].customDate||""};}
+  db.ref("cronograma/"+key).set(data,function(e){isSaving=false;setSyncBadge(e?"err":"ok");});
 }
-function saveToFirebase() {
-  if(isSaving) return;
-  isSaving=true; setSyncBadge("wait");
-  var key=getDbKey(); var data={};
-  for(var id in ST){
-    data[id]={resps:ST[id].resps.join(","),status:ST[id].status,obs:ST[id].obs||"",customDate:ST[id].customDate||""};
-  }
-  db.ref("cronograma/"+key).set(data,function(error){
-    isSaving=false;
-    if(error){setSyncBadge("err");}else{setSyncBadge("ok");}
+
+function loadMeta(cb){
+  db.ref("meta").once("value",function(snap){
+    var meta=snap.val()||{};
+    for(var k in BASE_CATS)CATS[k]=Object.assign({},BASE_CATS[k]);
+    if(meta.cats){for(var ck in meta.cats)CATS[ck]=meta.cats[ck];}
+    INFORMES=BASE_INFORMES.slice();
+    if(meta.customInformes){for(var ci=0;ci<meta.customInformes.length;ci++)INFORMES.push(meta.customInformes[ci]);}
+    for(var i=0;i<INFORMES.length;i++){
+      var inf=INFORMES[i];
+      if(!ST[inf.id])ST[inf.id]={resps:[inf.base?BASE_RESPS[parseInt(inf.id.replace("b",""))]||"NA":"NA"],status:"Pendiente",obs:"",customDate:null};
+    }
+    if(cb)cb();
   });
 }
-function loadFromFirebase(callback) {
+
+function loadFromFirebase(cb){
   setSyncBadge("load");
   var key=getDbKey();
-  db.ref("cronograma/"+key).once("value",function(snapshot){
-    var data=snapshot.val();
+  db.ref("cronograma/"+key).once("value",function(snap){
+    var data=snap.val();
     if(data){
       for(var id in data){
         if(ST[id]!==undefined){
-          ST[id].resps=data[id].resps?data[id].resps.split(","):[defResps[id]];
+          ST[id].resps=data[id].resps?data[id].resps.split(","):["NA"];
           ST[id].status=data[id].status||"Pendiente";
           ST[id].obs=data[id].obs||"";
           ST[id].customDate=data[id].customDate||null;
@@ -259,24 +320,25 @@ function loadFromFirebase(callback) {
     }
     setSyncBadge("ok");
     document.getElementById("loadingOverlay").style.display="none";
-    if(callback)callback();
-  },function(){setSyncBadge("err");document.getElementById("loadingOverlay").style.display="none";if(callback)callback();});
+    if(cb)cb();
+  },function(){setSyncBadge("err");document.getElementById("loadingOverlay").style.display="none";if(cb)cb();});
 }
-function listenFirebase() {
+
+function listenFirebase(){
   var key=getDbKey();
-  db.ref("cronograma/"+key).on("value",function(snapshot){
+  db.ref("cronograma/"+key).on("value",function(snap){
     if(isSaving)return;
-    var data=snapshot.val();
+    var data=snap.val();
     if(data){
       for(var id in data){
         if(ST[id]!==undefined){
-          ST[id].resps=data[id].resps?data[id].resps.split(","):[defResps[id]];
+          ST[id].resps=data[id].resps?data[id].resps.split(","):["NA"];
           ST[id].status=data[id].status||"Pendiente";
           ST[id].obs=data[id].obs||"";
           ST[id].customDate=data[id].customDate||null;
         }
       }
-      render(); setSyncBadge("ok");
+      render();setSyncBadge("ok");
     }
   });
 }
@@ -288,108 +350,47 @@ function habitDays(y,m){
   return ds;
 }
 function calcDeadline(inf,y,m){
-  if(ST[inf.id].customDate) return new Date(ST[inf.id].customDate+"T00:00:00");
-  var h=habitDays(y,m); var n=h.length;
-  if(inf.tipo==="penultimo") return h[n-2];
-  if(inf.tipo==="habil_fin") return h[Math.max(0,n-inf.off)];
+  if(ST[inf.id]&&ST[inf.id].customDate)return new Date(ST[inf.id].customDate+"T00:00:00");
+  var h=habitDays(y,m);var n=h.length;
+  if(inf.tipo==="penultimo")return h[n-2];
+  if(inf.tipo==="habil_fin")return h[Math.max(0,n-inf.off)];
   return h[n-1];
 }
 function refLabel(inf){
-  if(ST[inf.id].customDate) return "Fecha personalizada";
-  if(inf.tipo==="penultimo") return "Penúltimo día hábil";
-  if(inf.tipo==="habil_fin") return inf.off+"° hábil desde fin";
-  if(inf.tipo==="libre") return "Seleccionar fecha";
-  return "Último día hábil";
+  if(ST[inf.id]&&ST[inf.id].customDate)return "Fecha personalizada";
+  if(inf.tipo==="penultimo")return "Penúltimo día hábil";
+  if(inf.tipo==="habil_fin")return inf.off+"° hábil desde fin";
+  if(inf.tipo==="libre")return "Seleccionar fecha";
+  return "Seleccionar fecha";
 }
-function toInputVal(d){
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-function fmtDate(d){
-  return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
-}
-function toICSDate(d){
-  return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
-}
+function toInputVal(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function fmtDate(d){return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();}
+function toICSDate(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");}
 function respOpts(sel){
   var html="";
-  for(var i=0;i<RESPS.length;i++){
-    html+="<option value='"+RESPS[i].sigla+"'"+(sel===RESPS[i].sigla?" selected":"")+">"+RESPS[i].nombre+"</option>";
-  }
+  for(var i=0;i<RESPS.length;i++)html+="<option value='"+RESPS[i].sigla+"'"+(sel===RESPS[i].sigla?" selected":"")+">"+RESPS[i].nombre+"</option>";
   return html;
 }
 function getNombres(resps){
   var names=[];
-  for(var i=0;i<resps.length;i++){
-    for(var j=0;j<RESPS.length;j++){
-      if(RESPS[j].sigla===resps[i]){names.push(RESPS[j].nombre);break;}
-    }
-  }
+  for(var i=0;i<resps.length;i++){for(var j=0;j<RESPS.length;j++){if(RESPS[j].sigla===resps[i]){names.push(RESPS[j].nombre);break;}}}
   return names.join(", ");
 }
-
-function generateICS() {
-  var y=parseInt(ySel.value); var m=parseInt(mSel.value);
-  var periodLabel=months[m]+" "+y;
-  var lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Cronograma Informes//ES","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
-  var now=new Date();
-  var stamp=now.getFullYear()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0")+"T"+
-    String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0")+String(now.getSeconds()).padStart(2,"0")+"Z";
-
-  for(var i=0;i<INFORMES.length;i++){
-    var inf=INFORMES[i];
-    if(inf.tipo==="libre"&&!ST[inf.id].customDate) continue;
-    var dl=calcDeadline(inf,y,m);
-    if(!dl) continue;
-    var dateStr=toICSDate(dl);
-    var respNombres=getNombres(ST[inf.id].resps);
-    var desc="Responsable: "+respNombres+"\\nEstado: "+ST[inf.id].status+(ST[inf.id].obs?"\\nObs: "+ST[inf.id].obs:"")+"\\nPeríodo: "+periodLabel;
-    lines.push("BEGIN:VEVENT");
-    lines.push("UID:informe-"+inf.id+"-"+dateStr+"@cronograma");
-    lines.push("DTSTAMP:"+stamp);
-    lines.push("DTSTART;VALUE=DATE:"+dateStr);
-    lines.push("DTEND;VALUE=DATE:"+dateStr);
-    lines.push("SUMMARY:"+inf.nombre+" — "+CATS[inf.cat].label);
-    lines.push("DESCRIPTION:"+desc);
-    lines.push("CATEGORIES:Cronograma Informes");
-    lines.push("STATUS:"+(ST[inf.id].status==="Emitido"?"COMPLETED":"NEEDS-ACTION"));
-    lines.push("BEGIN:VALARM");
-    lines.push("TRIGGER:-P1D");
-    lines.push("ACTION:DISPLAY");
-    lines.push("DESCRIPTION:Recordatorio: "+inf.nombre+" vence mañana");
-    lines.push("END:VALARM");
-    lines.push("END:VEVENT");
-  }
-  lines.push("END:VCALENDAR");
-  return lines.join("\r\n");
+function getCatPillClass(cat){
+  var map={calidad:"cat-calidad",movimiento:"cat-movimiento",construccion:"cat-construccion",prode:"cat-prode"};
+  return map[cat]||"cat-custom";
 }
-
-function downloadICS() {
-  var y=parseInt(ySel.value); var m=parseInt(mSel.value);
-  var content=generateICS();
-  var isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
-  if(isIOS||isSafari){
-    var dataUri="data:text/calendar;charset=utf-8,"+encodeURIComponent(content);
-    window.open(dataUri,"_blank");
-  } else {
-    var blob=new Blob([content],{type:"text/calendar;charset=utf-8"});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement("a");
-    a.href=url;
-    a.download="cronograma_"+months[m]+"_"+y+".ics";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+function getGrpBg(cat){
+  var map={calidad:"#f0eeff",movimiento:"#edf8f3",construccion:"#fdf5e8",prode:"#e8f3fc"};
+  return map[cat]||"#f5f5f2";
 }
+function getCatLabel(cat){return CATS[cat]?CATS[cat].label:cat;}
+function getCatColor(cat){return CATS[cat]?CATS[cat].color:"#888";}
+function getCatGrp(cat){return CATS[cat]?CATS[cat].grp||CATS[cat].label:cat;}
 
 function renderKPI(){
   var e=0,p=0,v=0;
-  for(var i=0;i<INFORMES.length;i++){
-    var s=ST[INFORMES[i].id].status;
-    if(s==="Emitido")e++;else if(s==="Vencido")v++;else p++;
-  }
+  for(var i=0;i<INFORMES.length;i++){var s=ST[INFORMES[i].id]?ST[INFORMES[i].id].status:"Pendiente";if(s==="Emitido")e++;else if(s==="Vencido")v++;else p++;}
   document.getElementById("kpiRow").innerHTML=
     "<div class='kpi'><div class='kpi-label'>Total</div><div class='kpi-val c-total'>"+INFORMES.length+"</div></div>"+
     "<div class='kpi'><div class='kpi-label'>Emitidos</div><div class='kpi-val c-emit'>"+e+"</div></div>"+
@@ -397,53 +398,50 @@ function renderKPI(){
     "<div class='kpi'><div class='kpi-label'>Vencidos</div><div class='kpi-val c-venc'>"+v+"</div></div>";
 }
 
-function getGrpBg(cat){
-  var colors={calidad:"#f0eeff",movimiento:"#edf8f3",construccion:"#fdf5e8",prode:"#e8f3fc"};
-  return colors[cat]||"#f5f5f2";
-}
-
 function render(){
-  var y=parseInt(ySel.value); var m=parseInt(mSel.value);
+  var y=parseInt(ySel.value),m=parseInt(mSel.value);
   document.getElementById("printPeriod").textContent="Período: "+months[m]+" "+y;
-  var tbody=document.getElementById("tbody");
-  tbody.innerHTML="";
-
-  for(var gi=0;gi<GRPS.length;gi++){
-    var cat=GRPS[gi];
-    var rows=[];
-    for(var ii=0;ii<INFORMES.length;ii++){if(INFORMES[ii].cat===cat)rows.push(INFORMES[ii]);}
-    var bg=getGrpBg(cat);
+  var tbody=document.getElementById("tbody");tbody.innerHTML="";
+  var grpOrder=Object.keys(CATS);
+  grpOrder.forEach(function(cat){
+    var rows=INFORMES.filter(function(inf){return inf.cat===cat;});
+    if(!rows.length)return;
+    var bg=getGrpBg(cat);var color=getCatColor(cat);
     var gr=document.createElement("tr");gr.className="grp-row";
-    gr.innerHTML="<td colspan='5' style='background:"+bg+";'><div class='grp-label'>"+
-      "<span class='grp-dot' style='background:"+CATS[cat].color+";'></span>"+
-      "<span class='grp-text' style='color:"+CATS[cat].color+";'>"+CATS[cat].grp+"</span>"+
+    gr.innerHTML="<td colspan='6' style='background:"+bg+";'><div class='grp-label'>"+
+      "<span class='grp-dot' style='background:"+color+";'></span>"+
+      "<span class='grp-text' style='color:"+color+";'>"+getCatGrp(cat)+"</span>"+
+      "<button class='grp-addbtn no-print' data-cat='"+cat+"'>+ Agregar fila</button>"+
       "<span class='grp-count'>"+rows.length+" informe"+(rows.length>1?"s":"")+"</span>"+
       "</div></td>";
     tbody.appendChild(gr);
 
-    for(var ri=0;ri<rows.length;ri++){
-      var inf=rows[ri];
-      var dl=null; var dateVal="";
-      if(inf.tipo!=="libre"||ST[inf.id].customDate){
-        dl=calcDeadline(inf,y,m); dateVal=toInputVal(dl);
-      }
+    rows.forEach(function(inf){
+      if(!ST[inf.id])ST[inf.id]={resps:["NA"],status:"Pendiente",obs:"",customDate:null};
+      var dl=null;var dateVal="";
+      if(inf.tipo!=="libre"||ST[inf.id].customDate){dl=calcDeadline(inf,y,m);if(dl)dateVal=toInputVal(dl);}
       var st=ST[inf.id].status;
       var stClass=st==="Emitido"?"st-emitido":st==="Vencido"?"st-vencido":"st-pendiente";
       var stBadgeClass=st==="Emitido"?"emit":st==="Vencido"?"venc":"pend";
       var respHTML="";
-      for(var rri=0;rri<ST[inf.id].resps.length;rri++){
+      ST[inf.id].resps.forEach(function(sig,rri){
         respHTML+="<div class='resp-row-wrap'>"+
-          "<select class='resp-sel' data-id='"+inf.id+"' data-idx='"+rri+"'>"+respOpts(ST[inf.id].resps[rri])+"</select>"+
+          "<select class='resp-sel' data-id='"+inf.id+"' data-idx='"+rri+"'>"+respOpts(sig)+"</select>"+
           (ST[inf.id].resps.length>1?"<button class='btn-x' data-id='"+inf.id+"' data-idx='"+rri+"'>×</button>":"")+
           "</div>";
-      }
+      });
       var canAdd=ST[inf.id].resps.length<RESPS.length;
       var obsVal=ST[inf.id].obs||"";
       var printDateTxt=dl?fmtDate(dl):"—";
+      var isCustom=!inf.base;
       var tr=document.createElement("tr");
       tr.innerHTML=
-        "<td><span class='cat-pill "+CATS[cat].pill+"'>"+CATS[cat].label+"</span>"+
-        "<div class='inf-name'>"+inf.nombre+"</div><div class='inf-sub'>"+inf.detalle+"</div></td>"+
+        "<td>"+
+          "<span class='cat-pill "+getCatPillClass(cat)+"' style='"+(isCustom?"background:#F1EFE8;color:#444441;":"")+"'>"+getCatLabel(cat)+"</span>"+
+          (isCustom?"<input class='inf-name-input' data-id='"+inf.id+"' value='"+inf.nombre+"' placeholder='Nombre'>":"<div class='inf-name'>"+inf.nombre+"</div>")+
+          (isCustom?"<input class='inf-sub-input' data-id='"+inf.id+"' value='"+inf.detalle+"' placeholder='Detalle'>":"<div class='inf-sub'>"+inf.detalle+"</div>")+
+          "<div class='print-name'>"+inf.nombre+"</div><div class='print-sub'>"+inf.detalle+"</div>"+
+        "</td>"+
         "<td><div class='date-wrap'>"+
           "<input type='date' class='date-input' data-id='"+inf.id+"' value='"+dateVal+"'>"+
           "<span class='print-date'>"+printDateTxt+"</span>"+
@@ -457,11 +455,15 @@ function render(){
           "<option"+(st==="Vencido"?" selected":"")+">Vencido</option></select>"+
           "<span class='print-st st-badge "+stBadgeClass+"'>"+st+"</span></td>"+
         "<td><input class='obs-input' type='text' data-id='"+inf.id+"' placeholder='—' value='"+obsVal+"' maxlength='60'>"+
-          "<span class='print-obs'>"+obsVal+"</span></td>";
+          "<span class='print-obs'>"+obsVal+"</span></td>"+
+        "<td>"+(isCustom?"<button class='btn-del-row' data-id='"+inf.id+"' title='Eliminar fila'>✕</button>":"")+"</td>";
       tbody.appendChild(tr);
-    }
-  }
+    });
+  });
 
+  tbody.querySelectorAll(".grp-addbtn").forEach(function(btn){
+    btn.addEventListener("click",function(e){openRowModal(e.target.dataset.cat);});
+  });
   tbody.querySelectorAll(".date-input").forEach(function(el){
     el.addEventListener("change",function(e){ST[e.target.dataset.id].customDate=e.target.value||null;render();saveToFirebase();});
   });
@@ -491,22 +493,130 @@ function render(){
     el.addEventListener("input",function(e){ST[e.target.dataset.id].obs=e.target.value;var span=e.target.parentNode.querySelector(".print-obs");if(span)span.textContent=e.target.value;});
     el.addEventListener("change",function(){saveToFirebase();});
   });
+  tbody.querySelectorAll(".inf-name-input").forEach(function(el){
+    el.addEventListener("change",function(e){
+      var id=e.target.dataset.id;
+      for(var i=0;i<INFORMES.length;i++){if(INFORMES[i].id===id){INFORMES[i].nombre=e.target.value;break;}}
+      saveMeta(function(){saveToFirebase();});
+    });
+  });
+  tbody.querySelectorAll(".inf-sub-input").forEach(function(el){
+    el.addEventListener("change",function(e){
+      var id=e.target.dataset.id;
+      for(var i=0;i<INFORMES.length;i++){if(INFORMES[i].id===id){INFORMES[i].detalle=e.target.value;break;}}
+      saveMeta(function(){saveToFirebase();});
+    });
+  });
+  tbody.querySelectorAll(".btn-del-row").forEach(function(el){
+    el.addEventListener("click",function(e){
+      var id=e.target.dataset.id;
+      if(!confirm("¿Eliminar esta fila?"))return;
+      INFORMES=INFORMES.filter(function(inf){return inf.id!==id;});
+      delete ST[id];
+      saveMeta(function(){saveToFirebase();render();});
+    });
+  });
   renderKPI();
 }
 
+function openRowModal(preselectedCat){
+  var sel=document.getElementById("newRowCat");sel.innerHTML="";
+  for(var k in CATS){var o=document.createElement("option");o.value=k;o.textContent=CATS[k].label||(CATS[k].grp||k);if(k===preselectedCat)o.selected=true;sel.appendChild(o);}
+  document.getElementById("newRowName").value="";
+  document.getElementById("newRowDetail").value="";
+  document.getElementById("modalRow").classList.add("open");
+}
+
+document.getElementById("btnRowCancel").addEventListener("click",function(){document.getElementById("modalRow").classList.remove("open");});
+document.getElementById("btnRowOk").addEventListener("click",function(){
+  var name=document.getElementById("newRowName").value.trim();
+  var detail=document.getElementById("newRowDetail").value.trim();
+  var cat=document.getElementById("newRowCat").value;
+  if(!name){alert("Ingresa un nombre.");return;}
+  var newId="c"+Date.now();
+  INFORMES.push({id:newId,nombre:name,detalle:detail||"",cat:cat,tipo:"libre",base:false});
+  ST[newId]={resps:["NA"],status:"Pendiente",obs:"",customDate:null};
+  document.getElementById("modalRow").classList.remove("open");
+  saveMeta(function(){saveToFirebase();render();});
+});
+
+document.getElementById("btnNewCat").addEventListener("click",function(){
+  document.getElementById("newCatName").value="";
+  document.getElementById("newCatColor").value="#888780";
+  document.getElementById("modalCat").classList.add("open");
+});
+document.getElementById("btnCatCancel").addEventListener("click",function(){document.getElementById("modalCat").classList.remove("open");});
+document.getElementById("btnCatOk").addEventListener("click",function(){
+  var name=document.getElementById("newCatName").value.trim();
+  var color=document.getElementById("newCatColor").value;
+  if(!name){alert("Ingresa un nombre.");return;}
+  var key="custom_"+Date.now();
+  CATS[key]={label:name,color:color,grp:name};
+  document.getElementById("modalCat").classList.remove("open");
+  saveMeta(function(){render();});
+});
+
+function generateICS(){
+  var y=parseInt(ySel.value),m=parseInt(mSel.value);
+  var lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Cronograma Informes//ES","CALSCALE:GREGORIAN","METHOD:PUBLISH",
+    "X-WR-CALNAME:Cronograma Informes "+months[m]+" "+y,
+    "BEGIN:VTIMEZONE","TZID:America/La_Paz","BEGIN:STANDARD","TZOFFSETFROM:-0400","TZOFFSETTO:-0400","TZNAME:BOT","DTSTART:19700101T000000","END:STANDARD","END:VTIMEZONE"];
+  var now=new Date();
+  var stamp=now.getFullYear()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0")+"T"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0")+String(now.getSeconds()).padStart(2,"0")+"Z";
+  INFORMES.forEach(function(inf){
+    if(inf.tipo==="libre"&&(!ST[inf.id]||!ST[inf.id].customDate))return;
+    var dl=calcDeadline(inf,y,m);if(!dl)return;
+    var ds=toICSDate(dl);
+    var resp=ST[inf.id]?getNombres(ST[inf.id].resps):"—";
+    var st=ST[inf.id]?ST[inf.id].status:"Pendiente";
+    var obs=ST[inf.id]?ST[inf.id].obs||"":"";
+    lines.push("BEGIN:VEVENT","UID:inf-"+inf.id+"-"+ds+"@cronograma","DTSTAMP:"+stamp,
+      "DTSTART;TZID=America/La_Paz:"+ds+"T080000","DTEND;TZID=America/La_Paz:"+ds+"T090000",
+      "SUMMARY:"+inf.nombre+" ("+getCatLabel(inf.cat)+")",
+      "DESCRIPTION:Responsable: "+resp+"\\nEstado: "+st+(obs?"\\nObs: "+obs:"")+"\\nPeríodo: "+months[m]+" "+y,
+      "STATUS:"+(st==="Emitido"?"COMPLETED":"NEEDS-ACTION"),
+      "BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:Recordatorio: "+inf.nombre+" vence mañana","END:VALARM",
+      "END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+function downloadICS(){
+  var y=parseInt(ySel.value),m=parseInt(mSel.value);
+  var content=generateICS();
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  var existing=document.getElementById("icsLinkBox");if(existing)existing.parentNode.removeChild(existing);
+  if(isIOS){
+    var dataUri="data:text/calendar;charset=utf-8,"+encodeURIComponent(content);
+    var box=document.createElement("div");box.id="icsLinkBox";
+    box.style.cssText="position:fixed;bottom:0;left:0;width:100%;background:#fff;border-top:1px solid #ddd;padding:16px;z-index:9999;text-align:center;";
+    box.innerHTML="<p style='font-size:13px;color:#5f5e5a;margin-bottom:10px;'>Toca para abrir en Calendario</p>"+
+      "<a href='"+dataUri+"' download='cronograma_"+months[m]+"_"+y+".ics' style='display:inline-block;background:#185FA5;color:#fff;font-size:14px;font-weight:600;padding:10px 28px;border-radius:8px;text-decoration:none;'>Agregar al Calendario</a>"+
+      "<br><button onclick=\"document.getElementById('icsLinkBox').remove()\" style='margin-top:10px;background:none;border:none;font-size:12px;color:#888;cursor:pointer;'>Cerrar</button>";
+    document.body.appendChild(box);
+  } else {
+    var blob=new Blob([content],{type:"text/calendar;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");a.href=url;a.download="cronograma_"+months[m]+"_"+y+".ics";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  }
+}
+
 function changePeriod(){
-  for(var i=0;i<INFORMES.length;i++){ST[INFORMES[i].id]={resps:[defResps[i]],status:"Pendiente",obs:"",customDate:null};}
   db.ref("cronograma/"+getDbKey()).off();
   document.getElementById("loadingOverlay").style.display="flex";
   loadFromFirebase(function(){render();listenFirebase();});
 }
 
 document.getElementById("btnFinalizar").addEventListener("click",function(){window.print();});
-document.getElementById("btnCalendar").addEventListener("click",function(){downloadICS();});
+document.getElementById("btnCalendar").addEventListener("click",downloadICS);
 mSel.addEventListener("change",changePeriod);
 ySel.addEventListener("change",changePeriod);
 
-loadFromFirebase(function(){render();listenFirebase();});
+loadMeta(function(){
+  loadFromFirebase(function(){render();listenFirebase();});
+});
 </script>
 </body>
 </html>
